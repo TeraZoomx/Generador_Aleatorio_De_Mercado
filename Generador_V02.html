@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Maket Fake</title>
+<style> 
+.C1 {
+padding: 10px;
+  display: flex; 
+
+}
+.C2 {
+  flex-grow: 1;
+  border: 1px solid black; 
+  padding: 10px;
+//  background-color : teal;
+}
+
+.C2p {
+  flex-grow: 1;
+  border: 1px solid black; 
+  padding: 10px;
+  Color: blue;
+  font-weight: bold;  
+  background-color :  rgb(225,225,200);
+}
+
+.C3 {
+  font-weight: bold;
+font-size: 23px;
+}
+
+.C4 {
+  font-weight: bold;
+font-size: 22px;
+}
+.C5 {
+// cuadro texto 
+font-weight: bold;
+font-size: 20px;
+padding: 10px;
+margin: 5px;
+border-radius: 5px;
+border: 1px solid #ccc;
+
+}
+#resumen {
+  font-size: 24px; 
+}
+
+.T1 {
+  background-color : black;
+  color: rgb(225,225,200);
+  padding: 20px;
+}
+.T2 {
+padding: 10px;
+}
+
+input, button {
+    font-size: 1em;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+</style>
+
+</head>
+<body>
+	<div class="T2"> <div class="T1">
+    	<div id="PantI" class="C3">Simulador Aleatorio de Mercado</div>
+	<div class="C4">Valores generados y su posicion: </div>
+   	<div id="pant0" class="C3">Son variaciones en el precio del mercado</div></br>
+   	<div id="pant1" class="C3">El precio con que abre el Mercado</div>
+   	<div id="pant2" class="C3">El valor Maximo alcanzado</div>
+   	<div id="pant3" class="C3">El valor Minimo alcanzado</div>  
+	<div id="pant4" class="C3">El valor con que se cierra dicho Mercado</div></br>
+	 <div id="PxC" class ="C3"></div> 
+
+	<div class="C1">
+            	<input type="number" id="inicioP" placeholder="Precio aprox">
+            	<button id="Bton">Aceptar</button>
+	<div id="Pant5" class="C5">Pulsa boton para generar los valores automaticos</div>
+        	</div>
+
+	</div></div>
+
+	<div class="C1">
+
+	<div class="C2"><canvas id="myChart" width="300" height="300">no canvas user...</canvas></div>
+
+	<div class="C2p" id="resumen">
+<div id="Rx1"> Resumen de posibilidades </br></div>
+<div id="Rx2">Apertura - Max:  </br></div>
+<div id="Rx3"> Apertura - Min:  </br></div>
+<div id="Rx4"> Apertura - Cierre: </br></div>
+<div id="Rx5"> Max - Min:     </br></div>
+<div id="Rx6"> Max - Cierre: </br></div>
+<div id="Rx7"> Min - Cierre: </br></div>
+<div id="Rx8"> </br>Comprar Derivados Financieros</div>
+<div id="Rx9">que se valorizan con la tendencia</div>
+	</div>
+	</div>
+
+    <script>
+let SimOnOff; 
+let ColorT = 0;
+let TendK = "grey";
+let precioInicial = 2134;
+inicioP.disabled = true; 
+
+//controles  para iniciar o detener el simulador
+
+
+function SimActive() {
+            const boton = document.getElementById('Bton');
+            const inputPrecio = document.getElementById('inicioP');
+            const ReDiv = document.getElementById('resumen');
+            const  Pt5 = document.getElementById('Pant5');
+//	alert( SimOnOff );
+	
+
+
+if (SimOnOff) {
+                // caso B 
+                boton.textContent = 'Iniciar';
+	Pt5.textContent = "Puedes ingresar un precio aproximado en la casilla izquierda"
+                boton.style.backgroundColor = '#3498db';
+ 	inputPrecio.disabled = false;
+//            ReDiv.style.display = 'none'; // ocultar el resumen
+	TotalAct(); 
+	SimOnOff = false;
+	
+
+	} else {
+
+                // caso A
+                const precio = parseFloat(inputPrecio.value);
+	if (isNaN(precio) || precio <= 0) {
+	Pt5.textContent = "precio inicial no Definido ( Valores automaticos )";
+	PantI.textContent	= "Generador de Mercado precio Aleatorio ";
+	precioInicial = 2134
+	 } else {
+	Pt5.textContent = "Puedes cambiar Precio-Aprox en la seccion Azul";
+	precioInicial = precio;
+	PantI.textContent	= "Generador de Mercado precio Aproximado: " + precio;
+	}
+//           ReDiv.style.display = 'block'; // mostrar el resumen
+                boton.textContent = 'de Nuevo';
+                boton.style.backgroundColor = '#e74c3c';
+                inputPrecio.disabled = true;
+
+	TotalAct();
+                SimOnOff = true;
+	 }
+
+        }
+
+
+// Inicio 
+window.onload = function() {
+//actualizarReloj();
+// setInterval(actualizarReloj, 250); 
+// Actualiza el reloj cada segundo
+document.getElementById('Bton').addEventListener('click', SimActive);
+};
+
+
+
+
+// calculo de datos
+
+function TotalAct() {
+
+	// Genera y muestra un vector de 10 números aleatorios entre 10 y 20
+	let N = [];
+	let P = [];
+	// alert ( precioInicial );
+	let precioActual = precioInicial;     	
+	
+	for (let i = 0; i < 10; i++) {
+            	   numAzar = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+	   N[i] = numAzar;
+	}
+
+	for (let i = 0; i < 9; i++) {
+	Td = (N[i+1] - N[i]);
+	if ( Td > 0 ) { A = (precioInicial * N[i]) / 100; precioActual += A; 
+	} else {
+	 A = (precioInicial * N[i]) / 100; precioActual -= A; 
+	} 
+	P[i] = precioActual.toFixed(2);
+	}
+
+ 	document.getElementById("pant0").textContent = P.join (", ");
+ 	let Nx = P.slice (  1, 9);
+	let maximo = Math.max(...Nx);
+	let minimo = Math.min(...Nx);
+	document.getElementById("pant1").textContent ="Apertura: " + P[0];
+	document.getElementById("pant4").textContent = "Cierre: " + P[8];
+	UbicMax = P.indexOf(maximo.toFixed(2));
+	UbicMin = P.indexOf(minimo.toFixed(2));	
+
+	let ClaveUbic;	
+	if ( UbicMax > UbicMin ) {
+	document.getElementById("pant2").textContent = "Min: "  + minimo;
+	document.getElementById("pant3").textContent = "Max: " + maximo;
+	Ax = minimo;
+	Ay = maximo; 	
+	} else {
+	document.getElementById("pant2").textContent = "Max: " + maximo;
+	document.getElementById("pant3").textContent = "Min: "  + minimo;
+	Ax = maximo;
+	Ay = minimo; 		
+	}
+
+//valores de la grafica
+
+const P1 = Math.abs(P[0]);
+const P2 =  Math.abs(Ax);
+const P3 =  Math.abs(Ay);
+const P4 =  Math.abs(P[8]);
+
+const Re1 = Math.abs( P1 - P2);
+const Re2 = Math.abs(P1 - P3);
+const Re3 = Math.abs(P1 - P4);
+const Re4 = Math.abs(P2 - P3);
+const Re5 =Math.abs(P2 - P4);
+const Re6 = Math.abs(P3 - P4);
+
+const Remax = Math.max(Re1, Re2, Re3, Re4, Re5, Re6);
+const PxC1 = (Re1 / Remax)*100;
+const PxC2 = (Re2 / Remax)*100;
+const PxC3 = (Re3 / Remax)*100;
+const PxC4 = (Re4 / Remax)*100;
+const PxC5 = (Re5 / Remax)*100;
+const PxC6 = (Re6 / Remax)*100;
+
+let IMx = []; 
+IMx[0]=Re1; IMx[1]=Re2; IMx[2]=Re3; IMx[3]=Re4; IMx[4]=Re5; IMx[5]=Re6; 
+let IM = [];
+IndMax = IMx.indexOf(Remax);
+IM [0] = "Apertura - Max:";
+IM [1] = "Apertura - Min: ";
+IM [2] = "Apertura - Cierre: ";
+IM [3] = "Max - Min: ";
+IM [4] = "Max - Cierre: ";
+IM [5] = "Min - Cierre: ";
+vv =IMx[IndMax]
+document.getElementById("PxC").textContent = "Delta max = "  +  IM[IndMax]  + "( "  + vv.toFixed(2) + " )" ;
+
+let REx = [];
+let Deriv = "Derivados Financieros"
+REx[0] = ( P1 - P2);
+REx[1] = (P1 - P3);
+REx[2]= (P1 - P4);
+REx[3] = (P2 - P3);
+REx[4] =(P2 - P4);
+REx[5] = (P3 - P4);
+IndComp =REx[IndMax]
+
+// tendencia
+if (IndComp>0) {
+ Deriv = "PUT's";
+  Detalle= "Que se valorizan a la Baja";
+ColorT = 1;}
+if (IndComp<0) {
+ Deriv = "CALL's";
+  Detalle= "Que se valorizan al Alza";
+ ColorT = 2;
+}
+
+
+//Resu();
+
+const canvas = document.getElementById('myChart');
+const Poncho = canvas.getContext('2d');
+
+Poncho.clearRect(0, 0, canvas.width, canvas.height)
+
+// Datos de ejemplo (reemplaza con tus datos)
+const Dx = [
+    { xa: 0.5, ya: P1 },
+    { xa: 1.5, ya: P2 },
+    { xa: 2.5, ya: P3 },
+    { xa: 3.5, ya: P4 },
+    // ... más datos
+];
+
+// Dimensiones del gráfico
+const width = canvas.width;
+const height = canvas.height;
+
+
+// Escalas (ajusta según tus datos)
+const Xsc = width / (Dx.length);
+alto = 1.5 * (Math.max(...Dx.map(d => d.ya)));
+const Ysc = height / alto;
+Poncho.lineWidth = 3; // para un grosor diferente (ej: 3, 4, etc.)
+
+Poncho.strokeStyle = 'Blue'; // Red Blue Green
+// Dibujar los ejes (opcional)
+Poncho.beginPath();
+Poncho.moveTo(0, height);
+Poncho.lineTo(width, height);
+Poncho.stroke();
+
+Poncho.beginPath();
+Poncho.moveTo(0, 0);
+Poncho.lineTo(0, height);
+Poncho.stroke();
+
+Poncho.fillStyle = 'red';
+// Dibujar los puntos arc( X, Y, R, ?, ?)
+Dx.forEach((point) => {
+    Poncho.beginPath();
+    Poncho.arc(point.xa *Xsc, height - point.ya * Ysc, 4, 0, 2 * Math.PI);
+    Poncho.fill();
+});
+
+Poncho.strokeStyle = 'blue'; //  color (red, blue, green), 
+// Unir los puntos (opcional)
+Poncho.beginPath();
+Poncho.moveTo(Dx[0].xa *Xsc, height - Dx[0].ya * Ysc);
+for (let i = 1; i < Dx.length; i++) {
+Poncho.lineTo(Dx[i].xa *Xsc, height - Dx[i].ya * Ysc);
+}
+Poncho.stroke();
+
+// red green grey  color de la tendencia
+if (ColorT === 0 ) { Poncho.fillStyle = "grey";
+ } else {
+if (ColorT === 1 ) { Poncho.fillStyle = "red"; }
+if (ColorT === 2 ) { Poncho.fillStyle = "green"; }
+}
+
+    Poncho.beginPath();
+    Poncho.arc(285, 280, 10, 0, 2 * Math.PI);
+    Poncho.fill();
+
+
+//}
+
+
+
+
+//function Resu() {
+// RESUMEN  
+
+	 resumen.innerHTML =`
+	Resumen de posibilidades </br>
+                Apertura - Max: ${PxC1.toFixed(0)}% </br>
+                Apertura - Min: 	${PxC2.toFixed(0)}%</br>
+                Apertura - Cierre: ${PxC3.toFixed(0)}%</br>
+                Max - Min: ${PxC4.toFixed(0)}%</br>
+                Max - Cierre: ${PxC5.toFixed(0)}%</br>
+                Min - Cierre: ${PxC6.toFixed(0)}%</br></br>
+	 comprar: ${Deriv}  </br>
+	-  ${Detalle} 
+                `;
+}
+
+
+
+    </script>
+
+</body>
+</html>
